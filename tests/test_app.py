@@ -18,7 +18,7 @@ class AnalisisTest(unittest.TestCase):
         self.assertAlmostEqual(resumen.iloc[0]['Promedio'], 42.8 / 6)
         self.assertEqual(len(alertas), 5)
         doc = Document(BytesIO(informe_word(resumen, alertas, INTERVALOS, invalidos, 'ejemplo.csv')))
-        self.assertEqual(len(doc.tables), 2)
+        self.assertEqual(len(doc.tables), 6)
         self.assertIn('didácticos', '\n'.join(p.text for p in doc.paragraphs))
 
     def test_informe_detallado_con_datos_ausentes(self):
@@ -28,7 +28,7 @@ class AnalisisTest(unittest.TestCase):
         contenido = informe_word(resumen, alertas, INTERVALOS, invalidos, 'prueba.csv',
                                  datos, {'Proyecto':'Campaña de prueba', 'Lugar':'Río de ejemplo'})
         doc = Document(BytesIO(contenido))
-        texto = '\n'.join(p.text for p in doc.paragraphs)
+        texto = '\n'.join([p.text for p in doc.paragraphs] + [c.text for t in doc.tables for r in t.rows for c in r.cells])
         self.assertEqual(len(doc.inline_shapes), 3)
         self.assertIn('Campaña de prueba', texto)
         self.assertIn('Sin datos válidos: no es posible evaluar', texto)
@@ -41,7 +41,8 @@ class AnalisisTest(unittest.TestCase):
         salida = BytesIO()
         df.to_excel(salida, index=False)
         leido = leer_archivo(salida.getvalue(), 'ejemplo.xlsx')
-        self.assertEqual(leido.iloc[0].tolist(), [7,20,3])
+        datos_excel, _ = preparar(leido, {k:k for k in INTERVALOS})
+        self.assertEqual(datos_excel.iloc[0].tolist(), [7,20,3])
         csv = b'ph;temperatura;turbidez\n7,2;20,5;3,1\n'
         datos, _ = preparar(leer_archivo(csv, 'a.csv'), {k:k for k in INTERVALOS})
         self.assertEqual(datos.iloc[0].tolist(), [7.2,20.5,3.1])

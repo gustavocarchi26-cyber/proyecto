@@ -1,0 +1,5 @@
+codigo_muestra,fecha,plomo,cadmio,arsenico,mercurio,conductividad
+FICT-A,2026-01-01,10,<0.5,2,<LC,450
+FICT-B,2026-01-02,20,<LQ,,0.2,500
+FICT-C,2026-01-03,ND,error,3,0.3,inf
+FICT-D,2026-01-04,,1,4,<0.1,550
