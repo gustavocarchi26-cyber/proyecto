@@ -84,7 +84,21 @@ try:
         st.success("No se encontraron valores fuera de los intervalos didácticos configurados.")
     else:
         st.dataframe(alertas, hide_index=True, width="stretch")
-    st.download_button("📄 Descargar informe Word", informe_word(resumen, alertas, intervalos, invalidos, nombre), "informe_ambiental.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    st.subheader("Informe detallado en Word")
+    st.caption("Incluye estadísticas, calidad de los datos, alertas, tres gráficos y recomendaciones de revisión. Los campos siguientes son opcionales.")
+    with st.expander("Identificación del informe"):
+        proyecto = st.text_input("Proyecto o campaña", max_chars=200)
+        lugar = st.text_input("Lugar o punto de muestreo", max_chars=200)
+        responsable = st.text_input("Responsable", max_chars=200)
+        observaciones = st.text_area("Observaciones del muestreo", max_chars=2000)
+    if st.button("Generar informe detallado", type="primary"):
+        with st.spinner("Preparando informe y gráficos…"):
+            informe = informe_word(resumen, alertas, intervalos, invalidos, nombre, datos,
+                                   {"Proyecto": proyecto, "Lugar": lugar, "Responsable": responsable,
+                                    "Observaciones": observaciones})
+        st.download_button("📄 Descargar informe Word", informe, "informe_ambiental.docx",
+                           "application/vnd.openxmlformats-officedocument.wordprocessingml.document", on_click="ignore")
+    st.caption("Si modificas datos, intervalos o identificación, vuelve a generar el informe antes de descargarlo.")
 except Exception as error:
     st.error(f"No se pudo analizar el archivo: {error}")
     st.info("Comprueba el formato, la primera hoja de Excel y las columnas seleccionadas. Para Excel utiliza archivos sin contraseña.")

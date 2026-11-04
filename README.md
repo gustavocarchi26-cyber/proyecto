@@ -9,7 +9,7 @@ Aplicación en español para explorar mediciones de pH, temperatura (°C) y turb
 - Calcular promedio, mínimo y máximo con los datos numéricos válidos.
 - Explorar gráficos con zoom y cursor.
 - Ajustar intervalos y ver cada medición fuera de ellos.
-- Descargar un informe Word con estadísticas, intervalos, datos excluidos y alertas.
+- Descargar un informe Word detallado con identificación del proyecto, estadísticas, porcentajes de alertas y datos excluidos, tres gráficos y recomendaciones de revisión.
 
 **Los intervalos iniciales son exclusivamente didácticos:** pH 6,5–8,5; temperatura 15–30 °C; turbidez 0–5 NTU. No son normas ambientales. No determinan potabilidad, seguridad ni cumplimiento legal. Los límites están incluidos; solo se marca lo que queda por debajo o por encima. No se convierten unidades automáticamente.
 
@@ -34,7 +34,7 @@ Aplicación en español para explorar mediciones de pH, temperatura (°C) y turb
    No necesitas activar el entorno virtual. Si `py` no existe, vuelve a instalar Python o usa `python` en su lugar y comprueba `python --version`.
 
 4. Streamlit abrirá el navegador. Si no lo hace, introduce `http://localhost:8501` en tu navegador de Windows. Al principio verás el ejemplo ya analizado.
-5. Para usar tu archivo, súbelo y desmarca **Usar datos de ejemplo** si sigue marcado. Revisa la fuente activa y selecciona las tres columnas. Ajusta los límites en la barra lateral y pulsa **Descargar informe Word** para guardar el documento.
+5. Para usar tu archivo, súbelo y desmarca **Usar datos de ejemplo** si sigue marcado. Revisa la fuente activa y selecciona las tres columnas. Ajusta los límites en la barra lateral y ve a **Informe detallado en Word**. Puedes completar proyecto, lugar, responsable y observaciones. Pulsa **Generar informe detallado** y después **Descargar informe Word** para guardar el documento. Si cambias los datos o los límites, genera nuevamente el informe.
 6. Detén la aplicación con `Ctrl+C` en la terminal. Para abrirla otro día, repite únicamente el último comando del paso 3 desde la carpeta del proyecto.
 
 Si el puerto está ocupado, añade `--server.port 8502` al comando de Streamlit.
@@ -87,3 +87,7 @@ git push -u origin HEAD:main
 El último comando envía la rama local a `main`. Si hay cambios previos en GitHub y el envío es rechazado, no uses `--force`: descarga e integra esos cambios primero. Si pide identificar al autor, configura `git config user.name "Tu nombre"` y `git config user.email "Tu correo"` y vuelve a ejecutar el commit. Git puede abrir el navegador para iniciar sesión en GitHub; no necesitas poner tokens dentro del código.
 
 Si trabajas desde esta interfaz, guarda primero los cambios mediante sus opciones de Git o ejecutando esos comandos en la terminal del entorno. Después podrás clonarlos en Windows. Nunca subas `.venv` ni archivos ambientales privados; `.gitignore` ya excluye el entorno virtual.
+
+## Informe detallado
+
+Los gráficos del Word son imágenes estáticas generadas con Matplotlib; los de la aplicación siguen siendo interactivos con Plotly. El porcentaje de alertas se calcula sobre los valores válidos de cada parámetro. El porcentaje de exclusión se calcula sobre todas sus filas. Un parámetro sin datos válidos se indica explícitamente y no se interpreta como ausencia de alertas. La identificación es opcional y se utiliza únicamente en el documento. La generación se realiza al pulsar el botón para evitar repetirla en cada ajuste. No se utiliza IA ni se hacen diagnósticos sanitarios o normativos.

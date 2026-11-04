@@ -21,6 +21,21 @@ class AnalisisTest(unittest.TestCase):
         self.assertEqual(len(doc.tables), 2)
         self.assertIn('didácticos', '\n'.join(p.text for p in doc.paragraphs))
 
+    def test_informe_detallado_con_datos_ausentes(self):
+        df = pd.DataFrame({'ph':[None, 'error'], 'temperatura':[15, 31], 'turbidez':[0, 5]})
+        datos, invalidos = preparar(df, {k:k for k in INTERVALOS})
+        resumen, alertas = resumir(datos, INTERVALOS)
+        contenido = informe_word(resumen, alertas, INTERVALOS, invalidos, 'prueba.csv',
+                                 datos, {'Proyecto':'Campaña de prueba', 'Lugar':'Río de ejemplo'})
+        doc = Document(BytesIO(contenido))
+        texto = '\n'.join(p.text for p in doc.paragraphs)
+        self.assertEqual(len(doc.inline_shapes), 3)
+        self.assertIn('Campaña de prueba', texto)
+        self.assertIn('Sin datos válidos: no es posible evaluar', texto)
+        self.assertIn('1 de 2 valores válidos (50.0%)', texto)
+        self.assertIn('100.0% excluido', texto)
+        self.assertIn('no representan normas', texto)
+
     def test_excel_y_csv_decimal(self):
         df = pd.DataFrame({'ph':[7.0], 'temperatura':[20], 'turbidez':[3]})
         salida = BytesIO()
@@ -45,6 +60,10 @@ class AnalisisTest(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertEqual([m.value for m in app.metric], ['6','18','5'])
         self.assertFalse(app.error)
+        app.button[0].click().run(timeout=30)
+        self.assertFalse(app.exception)
+        self.assertFalse(app.error)
+        self.assertEqual(len(app.get('download_button')), 2)
         app.number_input(key='min_ph').set_value(10.0).run()
         self.assertTrue(app.error)
         self.assertFalse(app.exception)
